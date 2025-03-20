@@ -6,12 +6,23 @@
 <body>
     <h1>JavaScript Function Tester</h1>
     <div id="results"></div>
+    <div id="summary"></div>
 
     <script>
+        const testResults = [];
+
         function logResult(testName, result) {
             const resultsElement = document.getElementById("results");
-            const status = result ? " Passed" : " Failed";
+            const status = result ? "✅ Passed" : "❌ Failed";
+            testResults.push({ testName, status });
             resultsElement.innerHTML += `<p><strong>${testName}:</strong> ${status}</p>`;
+        }
+
+        function displaySummary() {
+            const summaryElement = document.getElementById("summary");
+            const passedTests = testResults.filter(test => test.status.includes("✅")).length;
+            const totalTests = testResults.length;
+            summaryElement.innerHTML = `<h2>Summary: ${passedTests} / ${totalTests} tests passed</h2>`;
         }
 
         function testJavaEnabled() {
@@ -59,6 +70,39 @@
             }
         }
 
+        function testIframeInjection() {
+            try {
+                const iframe = document.createElement("iframe");
+                iframe.srcdoc = "<script>parent.logResult('Iframe Injection', true)<\/script>";
+                document.body.appendChild(iframe);
+            } catch (e) {
+                logResult("Iframe Injection", false);
+            }
+        }
+
+        function testBookmarklet() {
+            try {
+                const bookmarklet = document.createElement("a");
+                bookmarklet.href = "javascript:(function(){alert('Bookmarklet works!')})();";
+                document.body.appendChild(bookmarklet);
+                bookmarklet.click();
+                logResult("Bookmarklet Execution", true);
+            } catch (e) {
+                logResult("Bookmarklet Execution", false);
+            }
+        }
+
+        function testScriptInjection() {
+            try {
+                const script = document.createElement("script");
+                script.textContent = "console.log('Script injection works!');";
+                document.body.appendChild(script);
+                logResult("Script Injection", true);
+            } catch (e) {
+                logResult("Script Injection", false);
+            }
+        }
+
         function runTests() {
             testJavaEnabled();
             testEval();
@@ -66,6 +110,10 @@
             testFetch();
             testLocalStorage();
             testConsoleLog();
+            testIframeInjection();
+            testBookmarklet();
+            testScriptInjection();
+            setTimeout(displaySummary, 500);  // Ensure async tests finish before summary
         }
 
         window.onload = runTests;
