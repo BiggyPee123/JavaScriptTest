@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Function Tester</title>
+</head>
+<body>
+    <h1>JavaScript Function Tester</h1>
+    <div id="results"></div>
+
+    <script>
+        function logResult(testName, result) {
+            const resultsElement = document.getElementById("results");
+            const status = result ? " Passed" : " Failed";
+            resultsElement.innerHTML += `<p><strong>${testName}:</strong> ${status}</p>`;
+        }
+
+        function testJavaEnabled() {
+            logResult("Java Enabled (navigator.javaEnabled)", navigator.javaEnabled ? navigator.javaEnabled() : false);
+        }
+
+        function testEval() {
+            try {
+                eval("console.log('Eval is working!')");
+                logResult("Eval (Function Execution)", true);
+            } catch (e) {
+                logResult("Eval (Function Execution)", false);
+            }
+        }
+
+        function testTimeout() {
+            try {
+                setTimeout(() => logResult("setTimeout()", true), 10);
+            } catch (e) {
+                logResult("setTimeout()", false);
+            }
+        }
+
+        function testFetch() {
+            fetch("https://jsonplaceholder.typicode.com/todos/1")
+                .then(() => logResult("Fetch API", true))
+                .catch(() => logResult("Fetch API", false));
+        }
+
+        function testLocalStorage() {
+            try {
+                localStorage.setItem("test", "value");
+                logResult("Local Storage", true);
+            } catch (e) {
+                logResult("Local Storage", false);
+            }
+        }
+
+        function testConsoleLog() {
+            try {
+                console.log("Console log test");
+                logResult("Console Log", true);
+            } catch (e) {
+                logResult("Console Log", false);
+            }
+        }
+
+        function runTests() {
+            testJavaEnabled();
+            testEval();
+            testTimeout();
+            testFetch();
+            testLocalStorage();
+            testConsoleLog();
+        }
+
+        window.onload = runTests;
+    </script>
+</body>
+</html>
