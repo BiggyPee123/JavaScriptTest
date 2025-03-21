@@ -1,122 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>JavaScript Function Tester</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Support Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            max-width: 600px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .supported {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .not-supported {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
 </head>
 <body>
-    <h1>JavaScript Function Tester</h1>
-    <div id="results"></div>
-    <div id="summary"></div>
+    <h1>Java Support Checker</h1>
+    <p>This page will check if Java is supported in your browser.</p>
+    <button id="checkJavaBtn">Check Java Support</button>
+    <div id="result" class="result"></div>
 
     <script>
-        const testResults = [];
+        document.getElementById('checkJavaBtn').addEventListener('click', function() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = ''; // Clear previous results
 
-        function logResult(testName, result) {
-            const resultsElement = document.getElementById("results");
-            const status = result ? "✅ Passed" : "❌ Failed";
-            testResults.push({ testName, status });
-            resultsElement.innerHTML += `<p><strong>${testName}:</strong> ${status}</p>`;
-        }
+            // Check for Java support
+            const javaEnabled = navigator.javaEnabled();
 
-        function displaySummary() {
-            const summaryElement = document.getElementById("summary");
-            const passedTests = testResults.filter(test => test.status.includes("✅")).length;
-            const totalTests = testResults.length;
-            summaryElement.innerHTML = `<h2>Summary: ${passedTests} / ${totalTests} tests passed</h2>`;
-        }
-
-        function testJavaEnabled() {
-            logResult("Java Enabled (navigator.javaEnabled)", navigator.javaEnabled ? navigator.javaEnabled() : false);
-        }
-
-        function testEval() {
-            try {
-                eval("console.log('Eval is working!')");
-                logResult("Eval (Function Execution)", true);
-            } catch (e) {
-                logResult("Eval (Function Execution)", false);
+            if (javaEnabled) {
+                resultDiv.className = 'result supported';
+                resultDiv.innerHTML = 'Java is enabled in your browser.';
+            } else {
+                resultDiv.className = 'result not-supported';
+                resultDiv.innerHTML = 'Java is NOT supported in your browser. Most modern browsers, including Chrome, do not support Java applets.';
             }
-        }
-
-        function testTimeout() {
-            try {
-                setTimeout(() => logResult("setTimeout()", true), 10);
-            } catch (e) {
-                logResult("setTimeout()", false);
-            }
-        }
-
-        function testFetch() {
-            fetch("https://jsonplaceholder.typicode.com/todos/1")
-                .then(() => logResult("Fetch API", true))
-                .catch(() => logResult("Fetch API", false));
-        }
-
-        function testLocalStorage() {
-            try {
-                localStorage.setItem("test", "value");
-                logResult("Local Storage", true);
-            } catch (e) {
-                logResult("Local Storage", false);
-            }
-        }
-
-        function testConsoleLog() {
-            try {
-                console.log("Console log test");
-                logResult("Console Log", true);
-            } catch (e) {
-                logResult("Console Log", false);
-            }
-        }
-
-        function testIframeInjection() {
-            try {
-                const iframe = document.createElement("iframe");
-                iframe.srcdoc = "<script>parent.logResult('Iframe Injection', true)<\/script>";
-                document.body.appendChild(iframe);
-            } catch (e) {
-                logResult("Iframe Injection", false);
-            }
-        }
-
-        function testBookmarklet() {
-            try {
-                const bookmarklet = document.createElement("a");
-                bookmarklet.href = "javascript:(function(){alert('Bookmarklet works!')})();";
-                document.body.appendChild(bookmarklet);
-                bookmarklet.click();
-                logResult("Bookmarklet Execution", true);
-            } catch (e) {
-                logResult("Bookmarklet Execution", false);
-            }
-        }
-
-        function testScriptInjection() {
-            try {
-                const script = document.createElement("script");
-                script.textContent = "console.log('Script injection works!');";
-                document.body.appendChild(script);
-                logResult("Script Injection", true);
-            } catch (e) {
-                logResult("Script Injection", false);
-            }
-        }
-
-        function runTests() {
-            testJavaEnabled();
-            testEval();
-            testTimeout();
-            testFetch();
-            testLocalStorage();
-            testConsoleLog();
-            testIframeInjection();
-            testBookmarklet();
-            testScriptInjection();
-            setTimeout(displaySummary, 500);  // Ensure async tests finish before summary
-        }
-
-        window.onload = runTests;
+        });
     </script>
 </body>
 </html>
